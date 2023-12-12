@@ -1,7 +1,7 @@
 
 #!/bin/bash
 # Automated simple information to start recon one a target, AI helped with bug fixes. I am not a programmer, or anyone cool, I am just trying to make it in this world. These tools need to be installed before use but a lot come with kali linux. 
-# 
+
 # Extract domain from the input URL
 target=$(echo "$1" | sed -E 's#(https?://)?(www\.)?##' | cut -d'/' -f1)
 recon_dir="$target\_recon"
@@ -24,4 +24,9 @@ dirb -w /usr/share/dirb/wordlists/common.txt "http://$target" > "$recon_dir/dirb
 echo " ** Dirb Scan Complete ** "
 
 echo " ** Sublist3r scan **"
-sublist3r -d "$target" > "$recon_dir/sub" || echo "Sublist3r failed"
+sublist3r -d "$target" -vT false > "$recon_dir/sub" || echo "Sublist3r failed"
+
+echo " ** Amass scan **"
+amass enum -d "$target" > "$recon_dir/amass" || echo "Amass failed"
+ 
+
