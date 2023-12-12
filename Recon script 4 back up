@@ -1,0 +1,27 @@
+
+#!/bin/bash
+# Automated simple information to start recon one a target, AI helped with bug fixes. I am not a programmer, or anyone cool, I am just trying to make it in this world. These tools need to be installed before use but a lot come with kali linux. 
+# 
+# Extract domain from the input URL
+target=$(echo "$1" | sed -E 's#(https?://)?(www\.)?##' | cut -d'/' -f1)
+recon_dir="$target\_recon"
+
+echo "** Starting scan on target making directory called $recon_dir **"
+mkdir -p "$recon_dir"
+
+echo " ** Whois and Nslookup information on $target **"
+whois "$target" > "$recon_dir/whois" || echo "Whois failed"
+nslookup "$target" > "$recon_dir/nslookup" || echo "Nslookup failed"
+
+echo "** Nmap scan -sC -sV T2 **"
+nmap -sC -sV -T2- "$target" > "$recon_dir/nmap" || echo "Nmap failed"
+
+echo " ** Nmap scan complete **"
+
+echo " ** Dirb search ** "
+dirb -w /usr/share/dirb/wordlists/common.txt "http://$target" > "$recon_dir/dirb" || echo "Dirb failed"
+
+echo " ** Dirb Scan Complete ** "
+
+echo " ** Sublist3r scan **"
+sublist3r -d "$target" > "$recon_dir/sub" || echo "Sublist3r failed"
